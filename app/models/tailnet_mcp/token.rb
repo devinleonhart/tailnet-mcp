@@ -5,7 +5,7 @@ module TailnetMcp
     SCOPES = %w[read write delete].freeze
     MAX_DAYS = 365
 
-    # Scopes as a list, stored as text that every database has.
+    # Scopes as a list in a text column, which every database has.
     class ScopeList < ActiveRecord::Type::String
       def cast(value)
         value.is_a?(String) ? value.split(",") : value
@@ -27,7 +27,11 @@ module TailnetMcp
     self.table_name = "mcp_tokens"
     self.filter_attributes += [:digest]
 
-    attribute :scopes, ScopeList.new, default: -> { [] }
+    # A column that is an array already stays one.
+    attribute :scopes, default: -> { [] }
+    decorate_attributes([:scopes]) do |_name, type|
+      type.respond_to?(:subtype) ? type : ScopeList.new
+    end
 
     normalizes :machine, with: ->(machine) { machine.strip }
     normalizes :scopes, with: ->(scopes) { scopes.uniq.sort_by { |scope| SCOPES.index(scope) || SCOPES.size } }

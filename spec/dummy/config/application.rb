@@ -42,6 +42,13 @@ module Things
   end
 end
 
+# As Blackbook and Chronicler have it: each token acts as a user.
+if ENV["OWNED"]
+  class User < ActiveRecord::Base; end
+
+  ActiveSupport.on_load(:tailnet_mcp_token) { belongs_to :user }
+end
+
 class PlainController < ActionController::API
   def show = head(:no_content)
 end
@@ -51,4 +58,15 @@ TailnetMcp.configure do |config|
   config.token_prefix = "tst"
   config.tool_sets = -> { [Things] }
   config.context = ->(token) { { machine: token.machine } }
+end
+
+if ENV["OWNED"]
+  TailnetMcp.configure do |config|
+    config.context = ->(token) { { email: token.user.email } }
+    config.token_attributes = lambda do |variables|
+      { user: User.find_by(email: variables["OWNER"]) || raise(TailnetMcp::Refused, "No user has the email in OWNER") }
+    end
+    config.list_facts = ->(token) { [token.user.email] }
+    config.log_facts = ->(token) { { user: token.user_id } }
+  end
 end

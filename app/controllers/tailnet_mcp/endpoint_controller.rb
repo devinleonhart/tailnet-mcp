@@ -106,7 +106,8 @@ module TailnetMcp
     def caller_facts
       return "token=- machine=-" if @token.nil?
 
-      "token=#{@token.id} machine=#{@token.machine.inspect}"
+      facts = configuration.log_facts.call(@token).map { |name, value| " #{name}=#{value.to_s.inspect[1..-2]}" }
+      "token=#{@token.id} machine=#{@token.machine.inspect}#{facts.join}"
     end
 
     # The name of a known tool or method, never text that a caller chose.

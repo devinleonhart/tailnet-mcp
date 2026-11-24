@@ -15,6 +15,15 @@ module TailnetMcp
     # Gives what tools receive besides their input, from the token.
     attr_accessor :context
 
+    # What a new token has besides, from the variables given to mcp:tokens:issue. May raise Refused.
+    attr_accessor :token_attributes
+
+    # What mcp:tokens:list shows of a token besides, as a list.
+    attr_accessor :list_facts
+
+    # What the log says of a token besides, by name.
+    attr_accessor :log_facts
+
     # How many calls a token may make, and how many failures an address, in a minute.
     attr_accessor :calls, :failures
 
@@ -24,6 +33,9 @@ module TailnetMcp
       @token_prefix = "mcp"
       @tool_sets = -> { [] }
       @context = ->(token) { token }
+      @token_attributes = ->(_variables) { {} }
+      @list_facts = ->(_token) { [] }
+      @log_facts = ->(_token) { {} }
       @calls = 120
       @failures = 20
     end

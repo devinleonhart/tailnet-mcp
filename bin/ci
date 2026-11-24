@@ -18,4 +18,7 @@ bundle exec rspec
 echo "==> rspec (PostgreSQL)"
 DATABASE_URL="${POSTGRES_URL:?}" bundle exec rspec
 
+echo "==> rspec (tokens of a user)"
+OWNED=1 DATABASE_URL="${POSTGRES_URL:?}" bundle exec rspec spec/owned
+
 echo "OK"

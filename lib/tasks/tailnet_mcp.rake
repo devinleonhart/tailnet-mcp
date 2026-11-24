@@ -6,8 +6,9 @@ namespace :mcp do
       days = Integer(ENV.fetch("DAYS", "90"), 10, exception: false) || abort("DAYS must be a number")
 
       begin
-        text = TailnetMcp::Token.issue!(machine: ENV["MACHINE"].to_s, scopes:, days:)
-      rescue ActiveRecord::RecordInvalid => error
+        more = TailnetMcp.configuration.token_attributes.call(ENV)
+        text = TailnetMcp::Token.issue!(machine: ENV["MACHINE"].to_s, scopes:, days:, **more)
+      rescue ActiveRecord::RecordInvalid, TailnetMcp::Refused => error
         abort error.message
       end
 
@@ -20,7 +21,8 @@ namespace :mcp do
       TailnetMcp::Token.order(:id).each do |token|
         state = token.revoked_at ? "revoked #{token.revoked_at.to_fs(:db)}" : "expires #{token.expires_at.to_fs(:db)}"
         used = token.last_used_at ? "last used #{token.last_used_at.to_fs(:db)}" : "never used"
-        $stdout.puts [token.id, token.machine, token.scopes.join(","), state, used].join("  ")
+        more = TailnetMcp.configuration.list_facts.call(token)
+        $stdout.puts [token.id, *more, token.machine, token.scopes.join(","), state, used].join("  ")
       end
     end
 

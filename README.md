@@ -40,6 +40,25 @@ bin/rails mcp:tokens:list
 bin/rails mcp:tokens:revoke ID=<id>
 ```
 
+### Tokens of a user
+
+An application may tie tokens to a record of its own, in a column that it adds to the table:
+
+```ruby
+ActiveSupport.on_load(:tailnet_mcp_token) { belongs_to :user }
+
+TailnetMcp.configure do |config|
+  config.context = ->(token) { token.user }
+  config.token_attributes = lambda do |variables|
+    { user: User.find_by(email: variables["OWNER"]) || raise(TailnetMcp::Refused, "No such user") }
+  end
+  config.list_facts = ->(token) { [token.user.email] }
+  config.log_facts = ->(token) { { user: token.user_id } }
+end
+```
+
+Scopes may also be in a PostgreSQL array column, for tables made before the gem.
+
 ## What it guarantees
 
 - Only `config.host` is answered, read from the Host header itself, since forwarding headers can be
