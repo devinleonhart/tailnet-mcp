@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+# Runs in the image of the Dockerfile. POSTGRES_URL adds a run of the specs on PostgreSQL.
+set -eu
+export CI=true
+
+echo "==> rubocop"
+bundle exec rubocop
+
+echo "==> brakeman"
+bundle exec brakeman -qz --force --no-pager
+
+echo "==> bundle-audit"
+bundle exec bundle-audit check --update
+
+echo "==> rspec (SQLite)"
+bundle exec rspec
+
+echo "==> rspec (PostgreSQL)"
+DATABASE_URL="${POSTGRES_URL:?}" bundle exec rspec
+
+echo "OK"
