@@ -3,7 +3,7 @@
 Serves [MCP](https://modelcontextprotocol.io) from a Rails application to machines on a private
 network, such as a tailnet. Each machine has its own token, with scopes and an expiry.
 
-## Use
+## Features
 
 ```ruby
 # Gemfile
@@ -59,7 +59,7 @@ end
 
 Scopes may also be in a PostgreSQL array column, for tables made before the gem.
 
-## What it guarantees
+What it guarantees:
 
 - Only `config.host` is answered, read from the Host header itself, since forwarding headers can be
   sent by anyone. A foreign Origin is refused.
@@ -75,4 +75,21 @@ The application behind a proxy should also keep `/mcp` from its public site, and
 
 ## Development
 
-`docker build -t tailnet-mcp .`, then `bin/ci` in that image with `POSTGRES_URL` set.
+Needs Docker.
+
+```bash
+docker build -t tailnet-mcp .
+docker run --rm tailnet-mcp bin/ci   # everything CI checks; POSTGRES_URL adds a run on PostgreSQL
+```
+
+## Deployment
+
+There is no release. An application pins a commit in its Gemfile and moves the pin to take a change.
+
+## Architecture
+
+```
+app/controllers/tailnet_mcp/   # The endpoint
+app/models/tailnet_mcp/        # The token
+lib/tailnet_mcp/               # Configuration, tool sets, limits, and the shared examples
+```
