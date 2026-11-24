@@ -224,7 +224,8 @@ RSpec.shared_examples "a tailnet MCP endpoint" do |tool:, page:|
       record = TailnetMcp::Token.authenticate(reader)
       call_tool(tool, token: reader)
 
-      expect(mcp_lines.sole).to match(/mcp token=#{record.id} machine="laptop" call=#{tool} outcome=ok duration=\d+ms$/)
+      facts = /token=#{record.id} machine="#{record.machine}"( \w+=\S+)*/
+      expect(mcp_lines.sole).to match(/mcp #{facts} call=#{tool} outcome=ok duration=\d+ms$/)
     end
 
     it "tells refusals and errors apart, and shows no text of the caller's" do

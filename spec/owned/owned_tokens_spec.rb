@@ -134,6 +134,15 @@ RSpec.describe "Tokens of a user", if: ENV.key?("OWNED"), type: :request do
     expect(mcp_status(token: reader)).to eq(401)
   end
 
+  it_behaves_like "a tailnet MCP endpoint", tool: "list_things", page: "/plain" do
+    def issue_token(*scopes, machine: "laptop")
+      model.issue!(machine:, user:, scopes: scopes.presence || ["read"])
+    end
+
+    let(:reader) { issue_token("read") }
+    let(:writer) { issue_token("read", "write") }
+  end
+
   it "add the application's facts to the log, on one line" do
     log = StringIO.new
     kept = Rails.logger

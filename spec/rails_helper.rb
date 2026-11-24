@@ -33,7 +33,5 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.include ActiveSupport::Testing::TimeHelpers
   config.order = :random
-  # With OWNED, only the specs of the second table.
-  config.filter_run_including(file_path: %r{spec/owned}) if ENV["OWNED"]
   Kernel.srand config.seed
 end
