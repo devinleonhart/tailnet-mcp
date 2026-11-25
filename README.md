@@ -7,7 +7,7 @@ network, such as a tailnet. Each machine has its own token, with scopes and an e
 
 ```ruby
 # Gemfile
-gem "tailnet_mcp", github: "devinleonhart/tailnet-mcp", ref: "<commit>"
+gem "tailnet_mcp", github: "devinleonhart/tailnet-mcp", tag: "v<version>"
 
 # config/routes.rb
 match "mcp", to: "tailnet_mcp/endpoint#handle", via: :all, format: false
@@ -84,7 +84,7 @@ docker run --rm tailnet-mcp bin/ci   # everything CI checks; POSTGRES_URL adds a
 
 ## Deployment
 
-There is no release. An application pins a commit in its Gemfile and moves the pin to take a change.
+A merge to `master` runs CI. When the version in `lib/tailnet_mcp/version.rb` is new, CI tags it `v<version>`. An application pins a tag in its Gemfile and moves the pin to take a change.
 
 ## Architecture
 
