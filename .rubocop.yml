@@ -8,24 +8,80 @@ AllCops:
   TargetRubyVersion: 4.0
   TargetRailsVersion: 8.1
   NewCops: enable
+  Exclude:
+    - "bin/**/*"
+    - "config/**/*"
+    - "config.ru"
+    - "db/schema.rb"
+    - "vendor/**/*"
+    - "tmp/**/*"
+
+# ─────────────────────────────────────────────────────────────
+# Layout
+# ─────────────────────────────────────────────────────────────
 
 Layout/LineLength:
   Max: 120
 
-Metrics:
+# ─────────────────────────────────────────────────────────────
+# Metrics - disable overly strict length/complexity cops
+# ─────────────────────────────────────────────────────────────
+
+Metrics/AbcSize:
   Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+    - "lib/tailnet_mcp/rspec.rb" # shared examples, which are specs
+    - "db/migrate/*"
+    - "db/seeds.rb"
+    - "lib/tasks/**/*"
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - "db/seeds.rb"
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - "db/seeds.rb"
+
+# ─────────────────────────────────────────────────────────────
+# Lint
+# ─────────────────────────────────────────────────────────────
+
+Lint/DuplicateBranch:
+  Exclude:
+    - "db/seeds.rb"
+
+# ─────────────────────────────────────────────────────────────
+# Naming
+# ─────────────────────────────────────────────────────────────
 
 Naming/RescuedExceptionsVariableName:
   PreferredName: error
 
-Style/Documentation:
-  Enabled: false
+# ─────────────────────────────────────────────────────────────
+# Style
+# ─────────────────────────────────────────────────────────────
 
-Style/FrozenStringLiteralComment:
+Style/Documentation:
   Enabled: false
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
 
 Style/SymbolArray:
   Enabled: false
@@ -33,12 +89,29 @@ Style/SymbolArray:
 Style/WordArray:
   Enabled: false
 
-Gemspec/DevelopmentDependencies:
+# ─────────────────────────────────────────────────────────────
+# Rails
+# ─────────────────────────────────────────────────────────────
+
+Rails/I18nLocaleTexts:
   Enabled: false
 
-# The gem's record has no base class of an application.
-Rails/ApplicationRecord:
-  Enabled: false
+Rails/ReversibleMigration:
+  Exclude:
+    - "db/migrate/*"
+
+Rails/Exit:
+  Exclude:
+    - "spec/rails_helper.rb"
+    - "spec/spec_helper.rb"
+
+Rails/Output:
+  Exclude:
+    - "spec/rails_helper.rb"
+
+# ─────────────────────────────────────────────────────────────
+# RSpec
+# ─────────────────────────────────────────────────────────────
 
 RSpec/ExampleLength:
   Enabled: false
@@ -49,5 +122,30 @@ RSpec/MultipleExpectations:
 RSpec/MultipleMemoizedHelpers:
   Enabled: false
 
+RSpec/NestedGroups:
+  Max: 5
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/Output:
+  Exclude:
+    - "spec/rails_helper.rb"
+
+# ─────────────────────────────────────────────────────────────
+# RSpecRails
+# ─────────────────────────────────────────────────────────────
+
 RSpecRails/InferredSpecType:
+  Enabled: false
+
+# ─────────────────────────────────────────────────────────────
+# Gem
+# ─────────────────────────────────────────────────────────────
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+# The gem's record has no base class of an application.
+Rails/ApplicationRecord:
   Enabled: false
